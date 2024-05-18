@@ -1,0 +1,55 @@
+
+services:
+  client:
+    container_name: ${APP_NAME}_client
+    image: node:latest
+    working_dir: /app/client
+    volumes:
+      - ./client:/app/client
+    command: bash -c "npm install && npm run build"
+  
+  db:
+    container_name: ${APP_NAME}_db
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./db-data:/var/opt/mssql
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD}
+      ACCEPT_EULA: "Y"
+
+  server:
+    container_name: ${APP_NAME}_server
+    image: node:latest
+    working_dir: /app/server
+    env_file:
+      - .env
+    volumes:
+      - ./server:/app/server
+      - ./client/dist:/app/server/dist
+    ports:
+      - "3000:3000"
+      - "5555:5555"
+    command: bash -c "npm install && npm install pm2 -g && npx prisma generate && pm2 start index.js --no-daemon --watch"
+    depends_on:
+      - client
+      - db
+  
+  nginx:
+    container_name: ${APP_NAME}_nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    # when using openssl
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
+    # volumes:
+    #   - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    #   - ./nginx/certificates/localhost.crt:/etc/ssl/certs/localhost.crt
+    #   - ./nginx/certificates/localhost.key:/etc/ssl/private/localhost.key
+    depends_on:
+      - server

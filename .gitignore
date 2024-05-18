@@ -1,0 +1,5 @@
+.env
+db-data/*
+!db-data/.keep
+nginx/*
+!nginx/nginx.conf

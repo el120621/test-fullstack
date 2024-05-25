@@ -31,7 +31,7 @@ services:
     ports:
       - "3000:3000"
       - "5555:5555"
-    command: bash -c "npm install && npm install pm2 -g && npx prisma generate && pm2 start index.js --no-daemon --watch"
+    command: bash -c "npm install && npm install pm2 -g && npm start"
     depends_on:
       - client
       - db

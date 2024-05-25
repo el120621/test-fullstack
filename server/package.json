@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx prisma generate && pm2 start index.js --no-daemon --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.14.0",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "pm2": "^5.3.1"
   },
   "devDependencies": {
     "prisma": "^5.14.0"
